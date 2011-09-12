@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>foursquare hackathon voting</title>
+  <style>
+    html {
+    	background-color: #fdfdfd;
+    }
+    
+    body {
+    	font: 62.5% Helvetica, Arial, sans-serif;
+    	color: #222;
+    }
+    
+    #container {
+    	width: 100%;
+    	margin: 0 auto;
+    	margin-top: 5em;
+    }
+    
+    #results {
+    	width: 100%;
+    }
+    
+    h1 {
+    	font-size: 3.2em;
+    	text-align: center;
+    	margin-bottom: 0.5em;
+    }
+    
+    p img {
+    	margin-top: 0.5em;
+    	font-size: 2.4em;
+    	float: right;
+    }
+    
+    strong {
+    	font-weight: bold;
+    	text-shadow: #bbb 0px 1px 3px;
+    }
+
+    td.bar {
+      width: 80%;
+    }
+
+    td.teamname { width: 10%; font-size: 1.5em; }
+
+    tr { height: 30px; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Vote! Text your favorite team's number to <strong>(917) 310-5220</strong>!</h1>
+    <table id="results">
+    </table>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    function updateTable(totals) {
+      totals.sort(function(a, b) { return b.total - a.total; });
+      var maxTotal = 1;
+      for (var i = 0; i < totals.length; ++i) {
+        maxTotal = Math.max(maxTotal, totals[i].total);
+      }
+      $('#results').empty();
+      for (var i = 0; i < totals.length; ++i) {
+        var oneteam = totals[i];
+        var str = ([
+          '<tr>',
+            '<td class="teamname">', oneteam.name, '</td>',
+            '<td><h1><strong>', oneteam.total, '</strong></h1></td>',
+            '<td class="bar">', '<div style="height: 30px; width: ', (oneteam.total*100.0) / maxTotal, '%; background-color: #ccc;"></div>', '</td>',
+          '</tr>'
+        ]).join('');
+        $('#results').append(str);
+      }
+      window.setTimeout(function() { $.getJSON('/fetch', updateTable) }, 30*1000);
+    };
+    $.getJSON('/fetch', updateTable);
+  </script>
+</body>
+</html>
